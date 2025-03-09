@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Task } from '../models/task.model';  
-
-
+import { Task } from '../models/task.model';
 
 export interface PeriodicElement {
   name: string;
@@ -34,18 +32,19 @@ export class TaskService {
 
   constructor(private firestore: Firestore) { }
 
-  createTask(task: Task): Observable<any> {
-    return new Observable(observer => {
-      addDoc(this.taskCollection, task)
-        .then(() => {
-          observer.next('Task saved successfully!');
-          observer.complete();
-        })
-        .catch(error => {
-          observer.error('Error saving task: ' + error);
-        });
-    });
-  }
+    // Create task
+    createTask(task: Task): Observable<any> {
+      return new Observable(observer => {
+        addDoc(this.taskCollection, task)
+          .then(() => {
+            observer.next('Task saved successfully!');
+            observer.complete();
+          })
+          .catch(error => {
+            observer.error('Error saving task: ' + error);
+          });
+      });
+    }
 
   getAllTask(){
     return of(ELEMENT_DATA)

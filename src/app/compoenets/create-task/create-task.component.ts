@@ -41,13 +41,6 @@ export class CreateTaskComponent {
     });
   }
 
-  // onSubmit() {
-  //   if (this.taskForm.valid) {
-  //     console.log('Task Created:', this.taskForm.value);
-  //     this.taskForm.reset();
-  //   }
-  // }
-
   onSubmit() {
     if (this.taskForm.valid) {
       const newTask: Task = this.taskForm.value;
