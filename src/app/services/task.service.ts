@@ -1,0 +1,53 @@
+import { Injectable } from '@angular/core';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { Task } from '../models/task.model';  
+
+
+
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
+}
+
+const ELEMENT_DATA: PeriodicElement[] = [
+  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
+  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
+  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
+  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
+  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
+  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
+  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
+  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
+  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
+  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+];
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TaskService {
+  private taskCollection = collection(this.firestore, 'tasks');
+
+  constructor(private firestore: Firestore) { }
+
+  createTask(task: Task): Observable<any> {
+    return new Observable(observer => {
+      addDoc(this.taskCollection, task)
+        .then(() => {
+          observer.next('Task saved successfully!');
+          observer.complete();
+        })
+        .catch(error => {
+          observer.error('Error saving task: ' + error);
+        });
+    });
+  }
+
+  getAllTask(){
+    return of(ELEMENT_DATA)
+  }
+}
