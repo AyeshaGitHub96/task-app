@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,36 +23,49 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatCardModule,
     MatProgressSpinnerModule,
     ReactiveFormsModule,
-    NgIf
+    NgIf,
+    AuthService,
+    FormBuilder,
+    FormGroup,
+    Validators
   ],
   templateUrl: './login-component.component.html',
   styleUrl: './login-component.component.scss'
 })
-export class LoginComponentComponent {
+export class LoginComponentComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
-  errorMessage: string | null = null;
+  errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private snackBar: MatSnackBar) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
-  async onLogin() {
-    if (this.loginForm.invalid) return;
-    this.loading = true;
-    this.errorMessage = null;
-
-    const { email, password } = this.loginForm.value;
-    try {
-      await this.authService.login(email, password);
-      this.snackBar.open('Login successful!', 'Close', { duration: 3000 });
-    } catch (error: any) {
-      this.errorMessage = error.message;
-      this.snackBar.open(this.errorMessage, 'Close', { duration: 3000 });
+  onLogin(): void {
+    if (this.loginForm.invalid) {
+      return;
     }
-    this.loading = false;
+
+    this.loading = true;
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password).subscribe({
+      next: (response) => {
+        this.router.navigate(['/dashboard']); // Redirect to your desired route after login
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error.message;
+      },
+    });
   }
 }

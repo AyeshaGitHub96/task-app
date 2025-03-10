@@ -11,11 +11,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { TaskService } from '../../services/task.service';
-import { Task } from '../../models/task.model';  
-
+import { Task } from '../../models/task.model';
 
 @Component({
-  selector: 'app-create-task',
+  selector: 'app-edit-task',
   standalone: true,
   imports: [
     MatFormFieldModule,
@@ -26,13 +25,20 @@ import { Task } from '../../models/task.model';
     MatNativeDateModule,
     ReactiveFormsModule
   ],
-  templateUrl: './create-task.component.html',
-  styleUrl: './create-task.component.scss'
+  templateUrl: './edit-task.component.html',
+  styleUrl: './edit-task.component.scss'
 })
-export class CreateTaskComponent {
+export class EditTaskComponent implements OnInit {
   taskForm: FormGroup;
+  taskId: string; // To store task ID for fetching the task
+  taskToUpdate: Task; // To store the task data for editing
 
-  constructor(private fb: FormBuilder,private taskService: TaskService) {
+  constructor(
+    private fb: FormBuilder,
+    private taskService: TaskService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     this.taskForm = this.fb.group({
       taskName: ['', Validators.required],
       description: [''],
@@ -41,14 +47,31 @@ export class CreateTaskComponent {
     });
   }
 
+  ngOnInit() {
+    // Get taskId from the route params
+    this.taskId = this.route.snapshot.paramMap.get('id')!; // Ensure the ID exists
+
+    // Fetch the task to be updated
+    this.taskService.getTaskById(this.taskId).subscribe({
+      next: (task: Task) => {
+        this.taskToUpdate = task;
+        this.taskForm.patchValue(task); // Populate form with task data
+      },
+      error: (err) => {
+        console.error('Error fetching task:', err);
+        alert('Failed to fetch task data');
+      }
+    });
+  }
+
   onSubmit() {
     if (this.taskForm.valid) {
-      const newTask: Task = this.taskForm.value;
+      const updatedTask: Task = { ...this.taskForm.value, id: this.taskId };
 
-      this.taskService.createTask(newTask).subscribe({
+      this.taskService.updateTask(updatedTask).subscribe({
         next: (message) => {
           alert(message); // Success alert
-          this.taskForm.reset(); // Reset form
+          this.router.navigate(['/task-list']); // Navigate back to the task list
         },
         error: (error) => {
           alert(error); // Error alert
@@ -57,4 +80,3 @@ export class CreateTaskComponent {
     }
   }
 }
-
