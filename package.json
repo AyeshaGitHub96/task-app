@@ -22,7 +22,7 @@
     "@angular/platform-browser-dynamic": "^17.0.0",
     "@angular/router": "^17.0.0",
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
-    "firebase": "^11.4.0",
+    "firebase": "^10.14.1",
     "rxjs": "~7.8.0",
     "testapp": "file:",
     "tslib": "^2.3.0",

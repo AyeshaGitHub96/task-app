@@ -1,4 +1,4 @@
-
+<!-- 
 <div>
     <mat-tab-group mat-align-tabs="start">
       <mat-tab label="+ New Task"><app-create-task></app-create-task></mat-tab>
@@ -6,9 +6,9 @@
     </mat-tab-group>
     </div>
     <div></div>
+ -->
 
-<!-- 
-<div *ngIf="isLoggedIn; else loginTemplate">
+<div *ngIf="['isLoggedIn']; else loginTemplate">
   <button mat-raised-button color="warn" (click)="logout()">Logout</button>
   
   <mat-tab-group mat-align-tabs="start">
@@ -21,4 +21,3 @@
   <router-outlet></router-outlet>
 </ng-template>
     
--->

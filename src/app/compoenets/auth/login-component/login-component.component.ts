@@ -8,7 +8,8 @@ import { BrowserModule } from '@angular/platform-browser';
 @Component({
   selector: 'app-login-component',
   standalone: true,
-  imports: [MatFormFieldModule, BrowserModule, ReactiveFormsModule,
+  imports: [MatFormFieldModule,  BrowserModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './login-component.component.html',
   styleUrl: './login-component.component.scss'
@@ -27,9 +28,9 @@ export class LoginComponentComponent {
   login(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.authService.login(email, password).subscribe({
+      this.authService['login'](email, password).subscribe({
         next: () => this.router.navigate(['/task-list']),
-        error: (err) => this.errorMessage = 'Invalid email or password'
+        error: (err: any) => this.errorMessage = 'Invalid email or password'
       });
     }
   }
