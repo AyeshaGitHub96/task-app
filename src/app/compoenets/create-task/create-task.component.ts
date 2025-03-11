@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Firestore, collection, addDoc } from '@angular/fire/firestore';
-import { Timestamp } from '@firebase/firestore-types';
-
 import { MatInputModule } from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -13,7 +10,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { TaskService } from '../../services/task.service';
-import { Task } from '../../models/task.model';  
+import { Task } from '../../models/task.model'; 
 
 
 @Component({
@@ -34,25 +31,25 @@ import { Task } from '../../models/task.model';
 export class CreateTaskComponent {
   taskForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private firestore: Firestore) {
+  constructor(private fb: FormBuilder, private taskService: TaskService) {
     this.taskForm = this.fb.group({
       name: ['', Validators.required],
-      description: [''],
-      dueDate: ['', Validators.required],
-      status: ['Pending']
+      description: ['', Validators.required],
+      duedate: ['', Validators.required],
+      status: ['pending'] // Default status
     });
   }
 
-  async saveTask() {
+  saveTask(): void {
     if (this.taskForm.valid) {
-      const tasksCollection = collection(this.firestore, 'tasks');
-      await addDoc(tasksCollection, {
-        name: this.taskForm.value.name,
-        description: this.taskForm.value.description,
-        dueDate: Timestamp.fromDate(new Date(this.taskForm.value.dueDate)),
-        status: 'Pending'
+      const task: Task = this.taskForm.value;
+      this.taskService.createTask(task).subscribe({
+        next: (message) => {
+          console.log(message);
+          this.taskForm.reset({ status: 'pending' }); // Reset form after save
+        },
+        error: (error) => console.error(error)
       });
-      this.taskForm.reset();
     }
   }
 }
