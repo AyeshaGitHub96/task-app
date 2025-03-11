@@ -1,47 +1,37 @@
 import { Injectable } from '@angular/core';
-
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, from } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import firebase from 'firebase/compat/app';
+import { Auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from '@angular/fire/auth';
+import { Observable, from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
 
-  private userSubject: BehaviorSubject<firebase.User | null>;
-  public user: Observable<firebase.User | null>;
+export class AuthService  {
+  private user!: User | null;
 
-  constructor(private afAuth: AngularFireAuth, private router: Router) {
-    this.userSubject = new BehaviorSubject<firebase.User | null>(null);
-    this.user = this.userSubject.asObservable();
-  }
-
-  // Get current user
-  public get currentUserValue(): firebase.User | null {
-    return this.userSubject.value;
-  }
-
-  // Login with email and password
-  login(email: string, password: string): Observable<any> {
-    return from(this.afAuth.signInWithEmailAndPassword(email, password)).pipe(
-      catchError((error) => {
-        throw error; // Handle errors as necessary
-      })
-    );
-  }
-
-  // Logout
-  logout(): void {
-    this.afAuth.signOut().then(() => {
-      this.router.navigate(['/login']);
+  constructor(private auth: Auth) {
+    onAuthStateChanged(this.auth, (user) => {
+      this.user = user;
     });
   }
 
-  // Listen to auth state changes
-  listenToAuthState(): Observable<firebase.User | null> {
-    return this.afAuth.authState;
+  // Login with email & password
+  login(email: string, password: string): Observable<any> {
+    return from(signInWithEmailAndPassword(this.auth, email, password));
+  }
+
+  // Logout
+  logout(): Observable<void> {
+    return from(signOut(this.auth));
+  }
+
+  // Get current user
+  getCurrentUser(): User | null {
+    return this.user;
+  }
+
+  // Check if user is logged in
+  isAuthenticated(): boolean {
+    return this.user !== null;
   }
 }

@@ -16,7 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   standalone: true,
   imports: [NgFor, NgIf, MatPaginatorModule, MatSelectModule, MatButtonModule, MatTableModule, MatFormFieldModule],
   templateUrl: './list-task.component.html',
-  styleUrls: ['./list-task.component.css']
+  styleUrls: ['./list-task.component.scss']
 })
 export class TaskListComponent implements OnInit {
   taskService = inject(TaskService);
