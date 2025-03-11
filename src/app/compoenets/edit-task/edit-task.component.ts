@@ -30,8 +30,8 @@ import { Task } from '../../models/task.model';
 })
 export class EditTaskComponent implements OnInit {
   taskForm: FormGroup;
-  taskId: string; // To store task ID for fetching the task
-  taskToUpdate: Task; // To store the task data for editing
+  taskId: string;
+  taskToUpdate: Task;
 
   constructor(
     private fb: FormBuilder,

@@ -1,31 +1,39 @@
-<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-  <mat-form-field class="full-width">
+<div class="outer">
+
+  <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
+
+  <mat-form-field appearance="outline">
     <mat-label>Task Name</mat-label>
-    <input matInput formControlName="taskName" required>
+    <input type="text"
+           placeholder="Assignment"
+           matInput
+           formControlName="name"
+    />
   </mat-form-field>
-
-  <mat-form-field class="full-width">
+  &nbsp;
+  <mat-form-field appearance="outline">
     <mat-label>Description</mat-label>
-    <textarea matInput formControlName="description" rows="1"></textarea>
+    <input type="text"
+      placeholder="Description"
+      matInput
+      formControlName="description"
+    />
   </mat-form-field>
-
-  <mat-form-field class="full-width">
+  &nbsp;
+  <mat-form-field appearance="outline">
     <mat-label>Due Date</mat-label>
-    <input matInput [matDatepicker]="picker" formControlName="dueDate">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
+    <input type="text"
+      placeholder="24/12/2021"
+      matInput
+      formControlName="duedate"
+    />
   </mat-form-field>
+  &nbsp;
+  &nbsp;
+  <button mat-raised-button
+          [disabled]="taskForm.invalid"
+          color="primary"
+          type="submit">Save Task</button>
 
-  <mat-form-field class="full-width">
-    <mat-label>Status</mat-label>
-    <mat-select formControlName="status" required>
-      <mat-option value="Pending">Pending</mat-option>
-      <mat-option value="Completed">Completed</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <div class="button-group">
-    <button mat-raised-button color="primary" type="submit" [disabled]="taskForm.invalid">Create Task</button>
-    <button mat-raised-button color="warn" type="button" (click)="taskForm.reset()">Reset</button>
-  </div>
-</form>
+        </form>
+</div>

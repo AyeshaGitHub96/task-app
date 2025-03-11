@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore';
+import { Timestamp } from '@firebase/firestore-types';
 
 import { MatInputModule } from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -32,29 +34,25 @@ import { Task } from '../../models/task.model';
 export class CreateTaskComponent {
   taskForm: FormGroup;
 
-  constructor(private fb: FormBuilder,private taskService: TaskService) {
+  constructor(private fb: FormBuilder, private firestore: Firestore) {
     this.taskForm = this.fb.group({
-      taskName: ['', Validators.required],
+      name: ['', Validators.required],
       description: [''],
-      dueDate: [''],
-      status: ['', Validators.required]
+      dueDate: ['', Validators.required],
+      status: ['Pending']
     });
   }
 
-  onSubmit() {
+  async saveTask() {
     if (this.taskForm.valid) {
-      const newTask: Task = this.taskForm.value;
-
-      this.taskService.createTask(newTask).subscribe({
-        next: (message) => {
-          alert(message); // Success alert
-          this.taskForm.reset(); // Reset form
-        },
-        error: (error) => {
-          alert(error); // Error alert
-        }
+      const tasksCollection = collection(this.firestore, 'tasks');
+      await addDoc(tasksCollection, {
+        name: this.taskForm.value.name,
+        description: this.taskForm.value.description,
+        dueDate: Timestamp.fromDate(new Date(this.taskForm.value.dueDate)),
+        status: 'Pending'
       });
+      this.taskForm.reset();
     }
   }
 }
-
