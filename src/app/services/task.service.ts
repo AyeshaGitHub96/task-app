@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, doc, updateDoc, deleteDoc, query, where, getDocs, collectionData } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, doc, updateDoc, deleteDoc, query, where, getDocs, getDoc } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map} from 'rxjs/operators';
 import { Task } from '../models/task.model';
 
 @Injectable({
@@ -10,46 +10,49 @@ import { Task } from '../models/task.model';
 export class TaskService {
   private taskCollection = collection(this.firestore, 'tasks');
 
-  constructor(private firestore: Firestore) { }
+  constructor(private firestore: Firestore) {}
 
   // Create task
-  createTask(task: Task): Observable<any> {
+  createTask(task: Task): Observable<void> {
     return from(addDoc(this.taskCollection, task)).pipe(
-      map(() => 'Task saved successfully!'),
-      catchError(error => { throw new Error('Error saving task: ' + error) })
+      map(() => void 0)
     );
   }
 
   // Get all tasks
   getTasks(): Observable<Task[]> {
-    return collectionData(this.taskCollection, { idField: 'id' }) as Observable<Task[]>;
+    return from(getDocs(this.taskCollection)).pipe(
+      map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Task))
+    );
+  }
+
+  // Get task by ID
+  getTaskById(id: string): Observable<Task | undefined> {
+    const taskRef = doc(this.firestore, `tasks/${id}`);
+    return from(getDoc(taskRef)).pipe(
+      map(docSnapshot => docSnapshot.exists() ? ({ id: docSnapshot.id, ...docSnapshot.data() }) as Task : undefined)
+    );
   }
 
   // Update task
-  updateTask(task: Task): Observable<any> {
-    const taskDocRef = doc(this.firestore, `tasks/${task.id}`);
-    return from(updateDoc(taskDocRef, { ...task })).pipe(
-      map(() => 'Task updated successfully!'),
-      catchError(error => { throw new Error('Error updating task: ' + error) })
+  updateTask(task: Task): Observable<void> {
+    const taskRef = doc(this.firestore, `tasks/${task.id}`);
+    return from(updateDoc(taskRef, { name: task.name, description: task.description, dueDate: task.dueDate, status: task.status })).pipe(
+      map(() => void 0)
     );
   }
 
   // Delete task
-  deleteTask(taskId: string): Observable<any> {
-    const taskDocRef = doc(this.firestore, `tasks/${taskId}`);
-    return from(deleteDoc(taskDocRef)).pipe(
-      map(() => 'Task deleted successfully!'),
-      catchError(error => { throw new Error('Error deleting task: ' + error) })
-    );
+  deleteTask(id: string): Observable<void> {
+    const taskRef = doc(this.firestore, `tasks/${id}`);
+    return from(deleteDoc(taskRef)).pipe(map(() => void 0));
   }
 
   // Filter tasks by status
   getTasksByStatus(status: string): Observable<Task[]> {
-    const taskQuery = query(this.taskCollection, where('status', '==', status));
-    return from(getDocs(taskQuery)).pipe(
-      map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Task)),
-      catchError(error => { throw new Error('Error fetching tasks: ' + error) })
+    const statusQuery = query(this.taskCollection, where('status', '==', status));
+    return from(getDocs(statusQuery)).pipe(
+      map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Task))
     );
   }
 }
-

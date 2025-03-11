@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, from } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 
@@ -26,7 +26,7 @@ export class AuthService {
 
   // Login with email and password
   login(email: string, password: string): Observable<any> {
-    return this.afAuth.signInWithEmailAndPassword(email, password).pipe(
+    return from(this.afAuth.signInWithEmailAndPassword(email, password)).pipe(
       catchError((error) => {
         throw error; // Handle errors as necessary
       })

@@ -1,0 +1,11 @@
+<div class="outer">
+    <h2>Are you sure you want to delete this task?</h2>
+    <p><strong>Task Name:</strong> {{ task.name }}</p>
+    <p><strong>Description:</strong> {{ task.description }}</p>
+    <p><strong>Due Date:</strong> {{ task.dueDate }}</p>
+    <p><strong>Status:</strong> {{ task.status }}</p>
+    
+    <button mat-raised-button color="warn" (click)="confirmDelete()">Delete</button>
+    <button mat-raised-button color="primary" (click)="cancel()">Cancel</button>
+  </div>
+  

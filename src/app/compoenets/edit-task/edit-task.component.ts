@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { MatInputModule } from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,9 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
-
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.model';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit-task',
@@ -29,53 +28,42 @@ import { Task } from '../../models/task.model';
   styleUrl: './edit-task.component.scss'
 })
 export class EditTaskComponent implements OnInit {
-  taskForm: FormGroup;
-  taskId: string;
-  taskToUpdate: Task;
+  taskForm!: FormGroup;
+  taskId!: string;
 
   constructor(
     private fb: FormBuilder,
     private taskService: TaskService,
     private route: ActivatedRoute,
     private router: Router
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.taskForm = this.fb.group({
-      taskName: ['', Validators.required],
-      description: [''],
-      dueDate: [''],
+      name: ['', Validators.required],
+      description: ['', Validators.required],
+      duedate: ['', Validators.required],
       status: ['', Validators.required]
     });
-  }
 
-  ngOnInit() {
-    // Get taskId from the route params
-    this.taskId = this.route.snapshot.paramMap.get('id')!; // Ensure the ID exists
-
-    // Fetch the task to be updated
-    this.taskService.getTaskById(this.taskId).subscribe({
-      next: (task: Task) => {
-        this.taskToUpdate = task;
-        this.taskForm.patchValue(task); // Populate form with task data
-      },
-      error: (err) => {
-        console.error('Error fetching task:', err);
-        alert('Failed to fetch task data');
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.taskId = id;
+        this.taskService.getTaskById(id).subscribe(task => {
+          if (task) {
+            this.taskForm.patchValue(task);
+          }
+        });
       }
     });
   }
 
-  onSubmit() {
+  updateTask(): void {
     if (this.taskForm.valid) {
-      const updatedTask: Task = { ...this.taskForm.value, id: this.taskId };
-
-      this.taskService.updateTask(updatedTask).subscribe({
-        next: (message) => {
-          alert(message); // Success alert
-          this.router.navigate(['/task-list']); // Navigate back to the task list
-        },
-        error: (error) => {
-          alert(error); // Error alert
-        }
+      const updatedTask: Task = { id: this.taskId, ...this.taskForm.value };
+      this.taskService.updateTask(updatedTask).subscribe(() => {
+        this.router.navigate(['/task-list']);
       });
     }
   }
