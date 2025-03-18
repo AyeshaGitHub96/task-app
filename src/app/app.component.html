@@ -1,23 +1,13 @@
-<!-- 
-<div>
-    <mat-tab-group mat-align-tabs="start">
-      <mat-tab label="+ New Task"><app-create-task></app-create-task></mat-tab>
-      <mat-tab label="All Task"><app-task-list></app-task-list></mat-tab>
-    </mat-tab-group>
-    </div>
-    <div></div>
- -->
-
-<div *ngIf="['isLoggedIn']; else loginTemplate">
-  <button mat-raised-button color="warn" (click)="logout()">Logout</button>
-  
-  <mat-tab-group mat-align-tabs="start">
-    <mat-tab label="+ New Task"><app-create-task></app-create-task></mat-tab>
-    <mat-tab label="All Tasks"><app-task-list></app-task-list></mat-tab>
-  </mat-tab-group>
+<div class="header">
+  <h1>Task Manager</h1>
+</div>
+<div class="navbar">
+<mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+  <mat-button-toggle value="bold" [routerLink]="['/tasks']">All Tasks</mat-button-toggle>
+  <mat-button-toggle value="italic" [routerLink]="['/create']">+ New Task</mat-button-toggle>
+</mat-button-toggle-group>
+</div>
+<div class="inner-container">
+  <router-outlet></router-outlet>
 </div>
 
-<ng-template #loginTemplate>
-  <router-outlet></router-outlet>
-</ng-template>
-    

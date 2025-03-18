@@ -1,4 +1,5 @@
 export interface Task {
+  duedate: any;
   id?: string;
   name: string;
   description: string;

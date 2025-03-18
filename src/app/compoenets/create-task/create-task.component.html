@@ -22,11 +22,9 @@
   &nbsp;
   <mat-form-field appearance="outline">
     <mat-label>Due Date</mat-label>
-    <input type="text"
-      placeholder="24/12/2021"
-      matInput
-      formControlName="duedate"
-    />
+    <input matInput [matDatepicker]="picker" formControlName="duedate">
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
   &nbsp;
   &nbsp;

@@ -14,7 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [NgFor, NgIf, MatPaginatorModule, MatSelectModule, MatButtonModule, MatTableModule, MatFormFieldModule],
+  imports: [NgFor, MatPaginatorModule, MatSelectModule, MatButtonModule, MatTableModule, MatFormFieldModule],
   templateUrl: './list-task.component.html',
   styleUrls: ['./list-task.component.scss']
 })
@@ -54,12 +54,15 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+
   EditCustomer(task: Task): void {
-    this.router.navigate(['/edit-task', task.id], { state: { task } });
+    this.router.navigate(['/edit', task.id]);
+    console.log('Navigating to edit:', task.id);
   }
 
   DeleteCustomer(task: Task): void {
-    this.router.navigate(['/delete-task', task.id], { state: { task } });
+    this.router.navigate(['/delete', task.id]);
+    console.log('Navigating to delete:', task.id);
   }
 
   serverDataManager(event: any): void {

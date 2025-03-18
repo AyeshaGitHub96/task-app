@@ -1,0 +1,20 @@
+.header{
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+.navbar{
+    :hover{
+        background-color: #9de5e7;
+    }
+    padding: 10px;
+    text-align: left;
+}
+.inner-container{
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}

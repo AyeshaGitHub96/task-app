@@ -1,6 +1,11 @@
 <div class="outer">
   <form [formGroup]="taskForm" (ngSubmit)="updateTask()">
     <mat-form-field appearance="outline">
+      <mat-label>Task ID</mat-label>
+      <input type="text" matInput formControlName="id" placeholder="3KpXvO26jwTJsY4zYkeE" />
+    </mat-form-field>
+    &nbsp;
+    <mat-form-field appearance="outline">
       <mat-label>Task Name</mat-label>
       <input type="text" matInput formControlName="name" placeholder="Enter task name" />
     </mat-form-field>
@@ -12,8 +17,11 @@
     &nbsp;
     <mat-form-field appearance="outline">
       <mat-label>Due Date</mat-label>
-      <input type="date" matInput formControlName="duedate" title="Due Date" />
+      <input matInput [matDatepicker]="picker" formControlName="dueDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+    
     &nbsp;
     <mat-form-field appearance="outline">
       <mat-label>Status</mat-label>

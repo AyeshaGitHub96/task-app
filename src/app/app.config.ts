@@ -3,30 +3,22 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
 import { provideFirebaseApp, initializeApp, getApp } from '@angular/fire/app';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideFirestore, getFirestore, initializeFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
-import { provideAuth } from '@angular/fire/auth';
-import { getAuth } from 'firebase/auth';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter([]),
+    provideRouter(routes),
     provideFirebaseApp(() => {
-      try {
-        return getApp(); // Try to get an existing app
-      } catch {
-        return initializeApp(environment.firebaseConfig); // Initialize if not already created
-      }
+      console.log("Initializing Firebase...");
+      const app = initializeApp(environment.firebaseConfig);
+      console.log("Firebase App Initialized:", getApp());
+      return app;
     }),
-    provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
+    provideFirestore(() => {
+      console.log("Initializing Firestore...");
+      const app = getApp(); 
+      return getFirestore(app); 
+    }),
   ],
 };
-
-  // providers: [
-  //   provideRouter([]),
-  //   provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-  //   provideAuth(() => getAuth()),
-  //   provideFirestore(() => getFirestore())
-  //   ]
-// };

@@ -1,44 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.model';
+import { NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-delete-task',
   standalone: true,
-  imports: [],
+  imports: [NgIf, MatButtonModule],
   templateUrl: './delete-task.component.html',
   styleUrl: './delete-task.component.scss'
 })
-export class DeleteTaskComponent implements OnInit {
-  task!: Task;
+export class DeleteTaskComponent  {
+  taskId: string | null = null;
+  task: Task | null = null;
 
-  constructor(
-    private taskService: TaskService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  constructor(private route: ActivatedRoute, private router: Router, private taskService: TaskService) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.taskService.getTaskById(id).subscribe(task => {
-        if (task) {
-          this.task = task;
-        }
+    this.taskId = this.route.snapshot.paramMap.get('id');
+
+    if (this.taskId) {
+      this.taskService.getTaskById(this.taskId).subscribe(task => {
+        this.task = task ?? null;
       });
     }
   }
 
   confirmDelete(): void {
-    if (this.task?.id) {
-      this.taskService.deleteTask(this.task.id).subscribe(() => {
-        this.router.navigate(['/task-list']);
+    if (this.taskId) {
+      this.taskService.deleteTask(this.taskId).subscribe(() => {
+        this.router.navigate(['/tasks']); // ✅ Navigate back to task list after deletion
       });
     }
   }
 
   cancel(): void {
-    this.router.navigate(['/task-list']);
+    this.router.navigate(['/tasks']); // ✅ Navigate back without deleting
   }
 }
