@@ -31,12 +31,12 @@ export class DeleteTaskComponent  {
   confirmDelete(): void {
     if (this.taskId) {
       this.taskService.deleteTask(this.taskId).subscribe(() => {
-        this.router.navigate(['/tasks']); // ✅ Navigate back to task list after deletion
+        this.router.navigate(['/tasks']); 
       });
     }
   }
 
   cancel(): void {
-    this.router.navigate(['/tasks']); // ✅ Navigate back without deleting
+    this.router.navigate(['/tasks']); 
   }
 }

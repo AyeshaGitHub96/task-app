@@ -18,7 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   templateUrl: './list-task.component.html',
   styleUrls: ['./list-task.component.scss']
 })
-export class TaskListComponent implements OnInit {
+export class ListTaskComponent implements OnInit {
   taskService = inject(TaskService);
   router = inject(Router);
 
@@ -34,11 +34,12 @@ export class TaskListComponent implements OnInit {
 
   loadTasks(): void {
     this.taskService.getTasks().subscribe(tasks => {
-      this.dataArray = tasks;
-      this.dataCount.set(tasks.length);
+      this.dataArray = tasks; // No need to format `duedate`, it's already a string in Firestore
+      console.log('Loaded tasks:', this.dataArray);
+      this.dataCount.set(this.dataArray.length);
     });
   }
-
+  
   search(value: string): void {
     if (value) {
       this.dataArray = this.dataArray.filter(task => task.name.toLowerCase().includes(value.toLowerCase()));
@@ -48,10 +49,10 @@ export class TaskListComponent implements OnInit {
   }
 
   updateStatus(task: Task): void {
-    this.taskService.updateTask({ ...task, status: task.status }).subscribe({
-      next: () => console.log('Status updated!'),
-      error: (err) => console.error(err)
-    });
+    // this.taskService.updateTask({ ...task, status: task.status }).subscribe({
+    //   next: () => console.log('Status updated!'),
+    //   error: (err) => console.error(err)
+    // });
   }
 
 

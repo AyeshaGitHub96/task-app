@@ -33,25 +33,36 @@ import { Task } from '../../models/task.model';
 export class CreateTaskComponent {
   taskForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private taskService: TaskService) {
-    this.taskForm = this.fb.group({
+  constructor(private formBuilder: FormBuilder, private taskService: TaskService) {
+    this.taskForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      duedate: ['', Validators.required],
+      duedate: [null, Validators.required],
       status: ['pending'] // Default status
+   
     });
   }
 
   saveTask(): void {
     if (this.taskForm.valid) {
-      const task: Task = this.taskForm.value;
+      const formValue = this.taskForm.value;
+  
+      const task: Task = {
+        ...formValue,
+        duedate: formValue.duedate instanceof Date
+          ? formValue.duedate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+          : formValue.duedate 
+      };
+  
       this.taskService.createTask(task).subscribe({
         next: (message) => {
-          console.log(message);
-          this.taskForm.reset({ status: 'pending' }); // Reset form after save
+          console.log('Task saved:', message);
+          this.taskForm.reset({ status: 'pending' });
         },
         error: (error) => console.error(error)
       });
     }
   }
+  
+  
 }

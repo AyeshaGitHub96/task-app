@@ -34,10 +34,11 @@ export class TaskService {
     );
   }
 
-  // Update task
-  updateTask(task: Task): Observable<void> {
-    const taskRef = doc(this.firestore, `tasks/${task.id}`);
-    return from(updateDoc(taskRef, { name: task.name, description: task.description, dueDate: task.dueDate, status: task.status })).pipe(
+ // Update task
+  updateTask(taskId: string, task: Task): Observable<void> {
+    const taskDocRef = doc(this.firestore, `tasks/${taskId}`);
+    console.log('Task:', task);
+    return from(updateDoc(taskDocRef, { ...task })).pipe(
       map(() => void 0)
     );
   }
